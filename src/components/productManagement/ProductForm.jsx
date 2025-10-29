@@ -1,31 +1,47 @@
 import React from "react";
 
-const ProductForm = () => {
+const ProductForm = ({ handleProductAdd }) => {
+  const [error, setError] = React.useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
-    const name = e.target.name.value;
-    const price = e.target.price.value;
-    const quantity = e.target.quantity.value;
+    const name = e.target.name.value.trim();
+    const priceValue = e.target.price.value;
+    const quantityValue = e.target.quantity.value;
+    if (!name || !priceValue || !quantityValue) {
+      setError("All fields are required");
+      return;
+    } else if (isNaN(priceValue) || isNaN(quantityValue)) {
+      setError("Price and Quantity must be valid numbers");
+      return;
+    } else {
+      setError("");
+    }
+
     const newProduct = {
       name,
-      price,
-      quantity,
+      price: parseFloat(priceValue),
+      quantity: parseInt(quantityValue, 10),
     };
-    console.log(newProduct);
+    // console.log(newProduct);
+    handleProductAdd(newProduct);
+    e.target.reset();
   };
   return (
     <div>
-      <h1>This is your Product</h1>
       <form onSubmit={handleSubmit}>
-        <input type="name" name="name" placeholder="name" />
+        <input type="text" name="name" placeholder="name" />
         <br />
-        <input type="number" name="price" placeholder="name" />
+        <input type="text" name="price" placeholder="Price" />
         <br />
-        <input type="number" name="quantity" placeholder="name" />
+        <input type="text" name="quantity" placeholder="quantity" />
         <br />
-        <input type="submit" placeholder="submit" />
+        <input type="submit" value="Submit" />
+        <br />
+
         <br />
       </form>
+
+      <p>{error}</p>
     </div>
   );
 };
